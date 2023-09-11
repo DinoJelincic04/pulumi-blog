@@ -1,9 +1,6 @@
 name: Pulumi blog action 
-stages:
-  - preview
-  - docker
 on: [workflow_dispatch]
-variables:
+env:
   DOCKER_REGISTRY: 791433942247.dkr.ecr.eu-central-1.amazonaws.com/blog-repo-945feee
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
   APP_NAME: pulumi-blog-app
@@ -13,7 +10,6 @@ variables:
   DOCKER_TLS_CERTDIR: ""
 jobs:
   preview:
-    stage: preview
     name: Preview
     runs-on: ubuntu-latest
     steps:
@@ -28,6 +24,14 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-action/amazon-ecr-login@v1
+      - name: Build, publish and deploy image to ECR
+        id: build-image
+        run: |
+          - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID .
+          - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
       - run: pip install -r requirements.txt
       - uses: pulumi/actions@v3
         with:
