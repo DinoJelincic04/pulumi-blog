@@ -30,7 +30,7 @@ jobs:
           ECR_REPOSITORY: pulumi_blog_container
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          - docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./flask_app/
+          - docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./flask_app
           - docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       - run: pip install -r requirements.txt
       - uses: pulumi/actions@v3
