@@ -1,4 +1,8 @@
 name: Pulumi blog action 
+stages:
+  - preview
+  - docker
+on: [workflow_dispatch]
 variables:
   DOCKER_REGISTRY: 791433942247.dkr.ecr.eu-central-1.amazonaws.com/blog-repo-945feee
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
@@ -7,10 +11,6 @@ variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
-stages:
-  - preview
-  - docker
-on: [workflow_dispatch]
 jobs:
   preview:
     stage: preview
