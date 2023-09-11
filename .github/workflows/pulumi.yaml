@@ -19,6 +19,11 @@ jobs:
       - run: pip install -r requirements.txt
       - uses: pulumi/actions@v3
         with:
+          command: login
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+      - uses: pulumi/actions@v3
+        with:
           command: preview
           stack-name: DinoJelincic/eks-pulumi-blog/develop # When using an individual account, only use stack-name.
         env:
