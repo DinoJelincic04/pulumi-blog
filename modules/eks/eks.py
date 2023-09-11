@@ -1,9 +1,7 @@
 import pulumi
 import pulumi_aws as aws
-import pulumi_eks as eks
 import modules.vpc.vpc as vpc
 import modules.iam.iam as iam
-import pulumi_kubernetes as k8s
 
 eks_cluster = aws.eks.Cluster("eks-cluster",
             role_arn=iam.master_iam.arn,

@@ -1,5 +1,5 @@
 import pulumi
-import pulumi_kubernetes as k8s
+#import pulumi_kubernetes as k8s
 import modules.eks.eks as eks
 
 
