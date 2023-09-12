@@ -29,8 +29,8 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: 791433942247.dkr.ecr.eu-central-1.amazonaws.com/blog-repo-d1f44dc
-          ECR_REPOSITORY: blog-repo-d1f44dc
-          IMAGE_TAG: ${{ github.sha }}
+          ECR_REPOSITORY: blog-image
+          IMAGE_TAG: latest
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./flask_app > docker_build.log 2>&1
           if [ $? -eq 0 ]; then
