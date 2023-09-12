@@ -95,3 +95,35 @@ worker_attach5 = aws.iam.RolePolicyAttachment("worker-attach5",
 worker_attach6 = aws.iam.RolePolicyAttachment("worker-attach6",
     role=worker_iam.name,
     policy_arn=worker_autoscaller.arn)
+
+
+# ecr_policy = aws.iam.Policy("ecr_iam",
+#                 path="/",
+#                 description="ecr-policy",
+#                 policy=json.dumps({
+#     "Version" : "2012-10-17",
+#     "Statement" : [
+#       {
+#         "Action" : [
+#                 "ecr:GetDownloadUrlForLayer",
+#                 "ecr:BatchCheckLayerAvailability",
+#                 "ecr:GetRepositoryPolicy",
+#                 "ecr:ListImages",
+#                 "ecr:GetImage",
+#                 "ecr:DescribeImages",
+#                 "ecr:InitiateLayerUpload",
+#                 "ecr:UploadLayerPart",
+#                 "ecr:CompleteLayerUpload",
+#                 "ecr:PutImage",
+#         ],
+#         "Effect" : "Allow",
+#         "Resource" : "*",
+#       }
+#     ],
+#   }))
+
+# ecr_repository_policy = aws.ecr.LifecyclePolicy(
+#     "custom-ecr-repo-policy",
+#     policy=ecr_policy.name,
+#     repository=ecr.ecr.name
+# )
