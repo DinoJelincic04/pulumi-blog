@@ -1,8 +1,6 @@
 import pulumi
 import pulumi_aws as aws
 import json
-import pulumi_eks as eks
-import base64
 
 ecr = aws.ecr.Repository("blog-repo",
         image_scanning_configuration=aws.ecr.RepositoryImageScanningConfigurationArgs(
