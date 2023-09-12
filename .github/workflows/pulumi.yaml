@@ -20,16 +20,22 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
       - name: Check for Dockerfile changes
         id: check-dockerfile-changes
         run: |
-          if git diff HEAD^ HEAD --name-only | grep -q 'flask_app/Dockerfile'; then
-            echo "Dockerfile has changed. Proceeding with image build."
+          # Check if this is the initial commit (no parent)
+          if [ -z "$(git rev-parse --verify HEAD^ 2>/dev/null)" ]; then
+            echo "This is the initial commit. Proceeding with image build."
             echo "::set-output name=build_image::true"
           else
-            echo "No changes in Dockerfile. Skipping image build."
-            echo "::set-output name=build_image::false"
+            # Check for changes in the Dockerfile in the flask_app folder
+            if git diff HEAD^ HEAD --name-only | grep -q 'flask_app/Dockerfile'; then
+              echo "Dockerfile has changed in the flask_app folder. Proceeding with image build."
+              echo "::set-output name=build_image::true"
+            else
+              echo "No changes in Dockerfile in the flask_app folder. Skipping image build."
+              echo "::set-output name=build_image::false"
+            fi
           fi
 
       - name: Login to ECR
