@@ -28,7 +28,7 @@ jobs:
       - name: Build, publish and deploy image to ECR
         id: build-image
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REGISTRY: 791433942247.dkr.ecr.eu-central-1.amazonaws.com/blog-repo-d1f44dc
           ECR_REPOSITORY: pulumi_blog_container
           IMAGE_TAG: ${{ github.sha }}
         run: |
