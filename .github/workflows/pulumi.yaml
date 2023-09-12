@@ -21,27 +21,41 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      - name: Check for Dockerfile changes
+        id: check-dockerfile-changes
+        run: |
+          if git diff HEAD^ HEAD --name-only | grep -q 'Dockerfile'; then
+            echo "Dockerfile has changed. Proceeding with image build."
+            echo "::set-output name=build_image::true"
+          else
+            echo "No changes in Dockerfile. Skipping image build."
+            echo "::set-output name=build_image::false"
+          fi
+
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, publish and deploy image to ECR
+      - name: Build, publish, and deploy image to ECR
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: blog-repo
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./flask_app > docker_build.log 2>&1
-          if [ $? -eq 0 ]; then
-            echo "Docker build successful."
+          if [ ${{ steps.check-dockerfile-changes.outputs.build_image }} == 'true' ]; then
+            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./flask_app > docker_build.log 2>&1
+            if [ $? -eq 0 ]; then
+              echo "Docker build is successful."
+            else
+              echo "Docker build failed. Check previous created docker_build.log for details."
+              cat docker_build.log
+              exit 1
+            fi
+            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           else
-            echo "Docker build failed. See docker_build.log for details."
-            cat docker_build.log
-          exit 1
+            echo "Skip image build as there are no changes in Dockerfile."
           fi
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
       - run: pip install -r requirements.txt
       - uses: pulumi/actions@v3
         with:
