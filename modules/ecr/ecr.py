@@ -63,4 +63,3 @@ lifecycle_policy = aws.ecr.LifecyclePolicy(
     })
 )
 
-kubeconfig_data = eks_cluster.kubeconfig.apply(lambda kc: kc)
