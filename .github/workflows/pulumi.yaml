@@ -24,7 +24,7 @@ jobs:
       - name: Check for Dockerfile changes
         id: check-dockerfile-changes
         run: |
-          if git diff HEAD^ HEAD --name-only | grep -q 'Dockerfile'; then
+          if git diff HEAD^ HEAD --name-only | grep -q 'flask_app/Dockerfile'; then
             echo "Dockerfile has changed. Proceeding with image build."
             echo "::set-output name=build_image::true"
           else
@@ -60,8 +60,8 @@ jobs:
       - uses: pulumi/actions@v3
         with:
           #command: destroy
-          #command: preview
-          command: up
+          command: preview
+          #command: up
           stack-name: DinoJelincic/eks-pulumi-blog/develop
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
