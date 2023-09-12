@@ -32,9 +32,16 @@ jobs:
           ECR_REPOSITORY: pulumi_blog_container
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          cd flask_app
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./flask_app > docker_build.log 2>&1
+          if [ $? -eq 0 ]; then
+            echo "Docker build successful."
+          else
+            echo "Docker build failed. See docker_build.log for details."
+            cat docker_build.log
+            exit 1
+          fi
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
       - run: pip install -r requirements.txt
       - uses: pulumi/actions@v3
         with:
