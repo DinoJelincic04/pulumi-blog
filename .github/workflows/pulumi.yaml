@@ -77,7 +77,7 @@ jobs:
           CLUSTER_NAME: eks-cluster-ff0fccb
         run: |
           aws eks update-kubeconfig --name $CLUSTER_NAME --region ${{ secrets.AWS_REGION }}
-          echo "::set-env name=KUBECONFIG_PATH::${HOME}/.kube/config"
+          echo "KUBECONFIG_PATH::${HOME}/.kube/config" >> $GITHUB_ENV
 
       # - name: Set Up kubectl
       #   uses: azure/setup-kubectl@v1
