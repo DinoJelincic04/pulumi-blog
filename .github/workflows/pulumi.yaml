@@ -113,7 +113,7 @@ jobs:
         id: check-flask-app-changes
         run: |
           # Check for changes in the flask_app folder
-          if git diff --quiet HEAD^ HEAD flask_app; then
+          if git diff --quiet HEAD^ HEAD -- flask_app; then
             echo "No changes in the flask_app folder. Skipping image build."
             echo "::set-output name=build_image::false"
           else
