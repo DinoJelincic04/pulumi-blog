@@ -129,7 +129,7 @@ jobs:
 
       - name: Build, publish, and deploy image to ECR
         id: build-image
-        if: (github.event.inputs.buildDockerImage == 'yes')'
+        if: (github.event.inputs.buildDockerImage == 'yes')
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: blog-repo
