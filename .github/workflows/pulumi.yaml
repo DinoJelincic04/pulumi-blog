@@ -1,3 +1,90 @@
+# name: Pulumi blog action 
+# on: [workflow_dispatch]
+# jobs:
+#   preview:
+#     name: Preview
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: docker/setup-qemu-action@v2
+#       - uses: docker/setup-buildx-action@v2 
+      
+#       - name: Set up Python 3.8                               
+#         uses: actions/setup-python@v2                               
+#         with:                                 
+#           python-version: '3.8'
+
+#       - name: Configure AWS Credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-region: ${{ secrets.AWS_REGION }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+
+#       - name: Check for Dockerfile changes
+#         id: check-dockerfile-changes
+#         run: |
+#           # Check if this is the initial commit (no parent)
+#           if [ -z "$(git rev-parse --verify HEAD^ 2>/dev/null)" ]; then
+#             echo "This is the initial commit. Proceeding with image build."
+#             echo "::set-output name=build_image::true"
+#           else
+#             # Check for changes in the Dockerfile in the flask_app folder
+#             if git diff --stat HEAD^ HEAD flask_app/Dockerfile | grep -q 'flask_app/Dockerfile'; then
+#               echo "Dockerfile has changed in the flask_app folder. Proceeding with image build."
+#               echo "::set-output name=build_image::true"
+#             else
+#               echo "No changes in Dockerfile in the flask_app folder. Skipping image build."
+#               echo "::set-output name=build_image::false"
+#             fi
+#           fi
+
+#       - name: Login to ECR
+#         id: login-ecr
+#         uses: aws-actions/amazon-ecr-login@v1
+
+#       - name: Build, publish, and deploy image to ECR
+#         id: build-image
+#         env:
+#           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#           ECR_REPOSITORY: blog-repo
+#           IMAGE_TAG: ${{ github.sha }}
+#         run: |
+#           if [ ${{ steps.check-dockerfile-changes.outputs.build_image }} == 'true' ]; then
+#             docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./flask_app > docker_build.log 2>&1
+#             if [ $? -eq 0 ]; then
+#               echo "Docker build is successful."
+#             else
+#               echo "Docker build failed. Check previous created docker_build.log for details."
+#               cat docker_build.log
+#               exit 1
+#             fi
+#             docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#           else
+#             echo "Skip image build as there are no changes in Dockerfile."
+#           fi
+#       - run: pip install -r requirements.txt
+#       - uses: pulumi/actions@v3
+#         with:
+#           #command: destroy
+#           command: preview
+#           #command: up
+#           stack-name: DinoJelincic/eks-pulumi-blog/develop
+#         env:
+#           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+#       - name: Fetch EKS Cluster Kubeconfig
+#         env:
+#           CLUSTER_NAME: eks-cluster-ff0fccb
+#         run: |
+#           aws eks update-kubeconfig --name $CLUSTER_NAME --region ${{ secrets.AWS_REGION }}
+
+#       - name: Deploy to EKS
+#         run: |
+#           kubectl apply -f k8s  
+
+
 name: Pulumi blog action 
 on: [workflow_dispatch]
 jobs:
@@ -83,8 +170,6 @@ jobs:
       - name: Deploy to EKS
         run: |
           kubectl apply -f k8s  
-
-
 
 
 # - name: Build, tag, and push image to Amazon ECR
