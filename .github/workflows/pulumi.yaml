@@ -86,7 +86,13 @@
 
 
 name: Pulumi blog action 
-on: [workflow_dispatch]
+on: 
+  workflow_dispatch:
+    inputs:
+      buildDockerImage:
+        description: 'Build docker image (yes/no*)'
+        required: true
+        default: 'yes'
 jobs:
   preview:
     name: Preview
@@ -109,17 +115,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 
-      - name: Check for changes in the flask_app folder
-        id: check-flask-app-changes
-        run: |
-          # Check for changes in the flask_app folder
-          if git diff --quiet HEAD^ HEAD -- flask_app; then
-            echo "No changes in the flask_app folder. Skipping image build."
-            echo "::set-output name=build_image::false"
-          else
-            echo "Changes detected in the flask_app folder. Proceeding with image build."
-            echo "::set-output name=build_image::true"
-          fi
+      # - name: Check for changes in the flask_app folder
+      #   id: check-flask-app-changes
+      #   run: |
+      #     # Check for changes in the flask_app folder
+      #     if git diff --quiet HEAD^ HEAD -- flask_app; then
+      #       echo "No changes in the flask_app folder. Skipping image build."
+      #       echo "::set-output name=build_image::false"
+      #     else
+      #       echo "Changes detected in the flask_app folder. Proceeding with image build."
+      #       echo "::set-output name=build_image::true"
+      #     fi
 
       - name: Login to ECR
         id: login-ecr
@@ -127,7 +133,7 @@ jobs:
 
       - name: Build, publish, and deploy image to ECR
         id: build-image
-        if: steps.check-flask-app-changes.outputs.build_image == 'true'
+        if: (github.event.inputs.buildDockerImage == 'yes')'
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: blog-repo
