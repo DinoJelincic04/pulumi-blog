@@ -1,4 +1,4 @@
-#Dockerfile for flask_app for pulumi blog
+#Dockerfile for flask_app
 FROM python:3.8-slim
 WORKDIR /app
 COPY . /app

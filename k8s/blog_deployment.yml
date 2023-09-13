@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pulumi-blog-deployment
+  namespace: pulumi-blog
+  labels:
+    app: pulumi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pulumi
+  template:
+    metadata:
+      labels:
+        app: pulumi
+    spec:
+      containers:
+      - name: pulumi
+        image: 791433942247.dkr.ecr.eu-central-1.amazonaws.com/blog-repo:93dbc8949e04940242ce0f2d33efd68f331b99b2
+        ports:
+          - containerPort: 80
