@@ -20,6 +20,8 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+
       - name: Check for Dockerfile changes
         id: check-dockerfile-changes
         run: |
@@ -29,7 +31,7 @@ jobs:
             echo "::set-output name=build_image::true"
           else
             # Check for changes in the Dockerfile in the flask_app folder
-            if git diff HEAD^ HEAD --name-only | grep -q 'flask_app/Dockerfile'; then
+            if git diff --stat HEAD^ HEAD flask_app/Dockerfile | grep -q 'flask_app/Dockerfile'; then
               echo "Dockerfile has changed in the flask_app folder. Proceeding with image build."
               echo "::set-output name=build_image::true"
             else
@@ -77,14 +79,6 @@ jobs:
           CLUSTER_NAME: eks-cluster-ff0fccb
         run: |
           aws eks update-kubeconfig --name $CLUSTER_NAME --region ${{ secrets.AWS_REGION }}
-
-      # - name: Set Up kubectl
-      #   uses: azure/setup-kubectl@v1
-      #   with:
-      #     kubeconfig: ${{ env.KUBECONFIG_PATH }}
-
-      # - name: Verify kubectl Configuration
-      #   run: kubectl config view
 
       - name: Deploy to EKS
         run: |
