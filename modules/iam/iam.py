@@ -33,6 +33,8 @@ master_attach3 = aws.iam.RolePolicyAttachment("master-attach3",
     role=master_iam.name,
     policy_arn="arn:aws:iam::aws:policy/AmazonEKSVPCResourceController")
 
+#IAM role for worker
+
 worker_iam = aws.iam.Role("worker-iam",
             assume_role_policy=json.dumps({
     "Version" : "2012-10-17",
