@@ -84,7 +84,6 @@
 #         run: |
 #           kubectl apply -f k8s  
 
-
 name: Pulumi blog action 
 on: 
   workflow_dispatch:
@@ -113,8 +112,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-
       # - name: Check for changes in the flask_app folder
       #   id: check-flask-app-changes
       #   run: |
@@ -126,7 +123,6 @@ jobs:
       #       echo "Changes detected in the flask_app folder. Proceeding with image build."
       #       echo "::set-output name=build_image::true"
       #     fi
-
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
