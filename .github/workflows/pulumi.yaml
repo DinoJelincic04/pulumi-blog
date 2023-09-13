@@ -72,12 +72,12 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-
-
-      # - name: Fetch EKS Cluster Kubeconfig
-      #   run: |
-      #     aws eks update-kubeconfig --name ${{ secrets.CLUSTER_NAME }} --region ${{ secrets.AWS_DEFAULT_REGION }}
-      #     echo "::set-env name=KUBECONFIG_PATH::${HOME}/.kube/config"
+      - name: Fetch EKS Cluster Kubeconfig
+        env:
+          CLUSTER_NAME: eks-cluster-ff0fccb
+        run: |
+          aws eks update-kubeconfig --name $CLUSTER_NAME --region ${{ secrets.AWS_REGION }}
+          echo "::set-env name=KUBECONFIG_PATH::${HOME}/.kube/config"
 
       # - name: Set Up kubectl
       #   uses: azure/setup-kubectl@v1

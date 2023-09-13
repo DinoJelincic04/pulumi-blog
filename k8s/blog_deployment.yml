@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pulumi-blog-deployment
-  namespace: pulumi-blog
+  #namespace: pulumi-blog
   labels:
     app: pulumi
 spec:
@@ -17,6 +17,8 @@ spec:
     spec:
       containers:
       - name: pulumi
-        image: 791433942247.dkr.ecr.eu-central-1.amazonaws.com/blog-repo:93dbc8949e04940242ce0f2d33efd68f331b99b2
+        image: 791433942247.dkr.ecr.eu-central-1.amazonaws.com/blog-repo:6fe4a16328f1ebdbc63645a63c7c16292ce7821a
         ports:
           - containerPort: 80
+      imagePullSecrets:
+      - name: regcred
