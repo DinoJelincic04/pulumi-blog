@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: pulumi
-        image: 791433942247.dkr.ecr.eu-central-1.amazonaws.com/blog-repo:6fe4a16328f1ebdbc63645a63c7c16292ce7821a
+        image: 791433942247.dkr.ecr.eu-central-1.amazonaws.com/blog-repo:06103163cafe8a531076d2ea200aaeb699d7e137
         ports:
           - containerPort: 80
       imagePullSecrets:
