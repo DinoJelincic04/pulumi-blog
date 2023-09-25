@@ -1,100 +1,54 @@
 import pulumi
+from pulumi_aws import config, iam
 import json
-import pulumi_aws as aws
 
-#IAM role for master
-
-master_iam = aws.iam.Role("master-iam",
+eks_cluster_role = iam.Role("eks-iam-role",
             assume_role_policy=json.dumps({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Effect" : "Allow",
-        "Principal" : {
-          "Service" : "eks.amazonaws.com"
-        },
-        "Action" : "sts:AssumeRole"
-      }
-    ]
-  }),
-  tags={
-      "Name": "Master-IAM-role",
-  })
+                'Version': '2012-10-17',
+                'Statement': [
+                    {
+                        'Action': 'sts:AssumeRole',
+                        'Principal': {
+                            'Service': 'eks.amazonaws.com'
+                        },
+                        'Effect': 'Allow',
+                        'Sid':''     
+                    }
+                            ],
 
-master_attach1 = aws.iam.RolePolicyAttachment("master-attach1",
-    role=master_iam.name,
-    policy_arn="arn:aws:iam::aws:policy/AmazonEKSClusterPolicy")
 
-master_attach2 = aws.iam.RolePolicyAttachment("master-attach2",
-    role=master_iam.name,
-    policy_arn="arn:aws:iam::aws:policy/AmazonEKSServicePolicy")
+            }),
+    )
 
-master_attach3 = aws.iam.RolePolicyAttachment("master-attach3",
-    role=master_iam.name,
-    policy_arn="arn:aws:iam::aws:policy/AmazonEKSVPCResourceController")
+iam.RolePolicyAttachment(
+    'eks-cluster-policy-attachment',
+    role=eks_cluster_role.id,
+    policy_arn='arn:aws:iam::aws:policy/AmazonEKSClusterPolicy',
+)
 
-#IAM role for worker
+ec2_node_role = iam.Role("ec2-node-iam-role",
+                         assume_role_policy=json.dumps({
+                             'Version': '2012-10-17',
+                             'Statement': [
+                                 {
+                                     'Action': 'sts:AssumeRole',
+                                     'Principal': {
+                                         'Service': 'ec2.amazonaws.com'
+                                     },
+                                     'Effect': 'Allow',
+                                     'Sid': ''
+                                 }
+                             ],
+                         }),
+    )
+iam.RolePolicyAttachment("eks-workernode-policy-attachment",
+                         role=ec2_node_role.id,
+                         policy_arn='arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy',)
 
-worker_iam = aws.iam.Role("worker-iam",
-            assume_role_policy=json.dumps({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Effect" : "Allow",
-        "Principal" : {
-          "Service" : "ec2.amazonaws.com"
-        },
-        "Action" : "sts:AssumeRole"
-      }
-    ]
-  }),
-  tags={
-      "Name": "Worker-IAM-role",
-  })
+iam.RolePolicyAttachment("eks-cni-policy-attachment",
+                         role=ec2_node_role.id,
+                         policy_arn='arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy',)
 
-worker_autoscaller = aws.iam.Policy("autoscaller_iam",
-                path="/",
-                description="ed-eks-autoscaler-policy",
-                policy=json.dumps({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Action" : [
-          "autoscaling:DescribeAutoScalingGroups",
-          "autoscaling:DescribeAutoScalingInstances",
-          "autoscaling:DescribeTags",
-          "autoscaling:DescribeLaunchConfigurations",
-          "autoscaling:SetDesiredCapacity",
-          "autoscaling:TerminateInstanceInAutoScalingGroup",
-          "ec2:DescribeLaunchTemplateVersions"
-        ],
-        "Effect" : "Allow",
-        "Resource" : "*",
-      }
-    ],
-  }))
-
-worker_attach1 = aws.iam.RolePolicyAttachment("worker-attach1",
-    role=worker_iam.name,
-    policy_arn="arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy")
-
-worker_attach2 = aws.iam.RolePolicyAttachment("worker-attach2",
-    role=worker_iam.name,
-    policy_arn="arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy")
-
-worker_attach3 = aws.iam.RolePolicyAttachment("worker-attach3",
-    role=worker_iam.name,
-    policy_arn="arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore")
-
-worker_attach4 = aws.iam.RolePolicyAttachment("worker-attach4",
-    role=worker_iam.name,
-    policy_arn="arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly")
-
-worker_attach5 = aws.iam.RolePolicyAttachment("worker-attach5",
-    role=worker_iam.name,
-    policy_arn="arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess")
-
-worker_attach6 = aws.iam.RolePolicyAttachment("worker-attach6",
-    role=worker_iam.name,
-    policy_arn=worker_autoscaller.arn)
-
+iam.RolePolicyAttachment("eks-container-policy-attachment",
+                         role=ec2_node_role.id,
+                         policy_arn='arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly',)
