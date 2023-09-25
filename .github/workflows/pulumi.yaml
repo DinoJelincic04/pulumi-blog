@@ -52,12 +52,12 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-      # - name: Fetch EKS Cluster Kubeconfig
-      #   env:
-      #     CLUSTER_NAME: eks-cluster-14425ea
-      #   run: |
-      #     aws eks update-kubeconfig --name $CLUSTER_NAME --region ${{ secrets.AWS_REGION }}
+      - name: Fetch EKS Cluster Kubeconfig
+        env:
+          CLUSTER_NAME: eks-cluster-14425ea
+        run: |
+          aws eks update-kubeconfig --name $CLUSTER_NAME --region ${{ secrets.AWS_REGION }}
 
-      # - name: Deploy to EKS
-      #   run: |
-      #     kubectl apply -f k8s  
+      - name: Deploy to EKS
+        run: |
+          kubectl apply -f k8s  
