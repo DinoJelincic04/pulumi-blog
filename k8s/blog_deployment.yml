@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pulumi-blog-deployment
-  #namespace: pulumi-blog
   labels:
     app: pulumi
 spec:
