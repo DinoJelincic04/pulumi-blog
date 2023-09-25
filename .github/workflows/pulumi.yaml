@@ -54,7 +54,7 @@ jobs:
 
       - name: Fetch EKS Cluster Kubeconfig
         env:
-          CLUSTER_NAME: eks-cluster-14425ea
+          CLUSTER_NAME: eks-cluster-9252e06
         run: |
           aws eks update-kubeconfig --name $CLUSTER_NAME --region ${{ secrets.AWS_REGION }}
 
