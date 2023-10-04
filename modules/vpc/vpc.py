@@ -4,14 +4,10 @@ import pulumi_aws as aws
 eks_vpc = aws.ec2.Vpc("eks-vpc",
         cidr_block="10.100.0.0/16",
         instance_tenancy="default",
+        enable_dns_hostnames= True,
+        enable_dns_support= True,
         tags={
-            "Name": "eks-vpc",
-        })
-
-eks_gw = aws.ec2.InternetGateway("eks-gw",
-        vpc_id=eks_vpc.id,
-        tags={
-            "Name": "eks-gw",
+            "Name": "eks-blog-vpc",
         })
 
 eks_subnet1 = aws.ec2.Subnet("public subnet az1",
@@ -32,6 +28,13 @@ eks_subnet2 = aws.ec2.Subnet("public subnet az2",
                 "Name": "Public subnet AZ2",
             })
 
+eks_gw = aws.ec2.InternetGateway("eks-gw",
+        vpc_id=eks_vpc.id,
+        tags={
+            "Name": "eks-blog-gw",
+        })
+
+
 eks_route_table = aws.ec2.RouteTable("eks-route-table",
                 vpc_id=eks_vpc.id,
                 routes=[
@@ -40,7 +43,7 @@ eks_route_table = aws.ec2.RouteTable("eks-route-table",
                     gateway_id=eks_gw.id,),
                 ],
                 tags={
-                    "Name": "Public route table",
+                    "Name": "Public-blog-route-table",
                 })
 
 eks_route_table_association1 = aws.ec2.RouteTableAssociation("eks-route-table-association1",
